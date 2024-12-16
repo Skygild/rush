@@ -46,9 +46,24 @@ export class Solana {
 	 * /// TODO: DONE RULE: The Game Developer must be able to spawn an entity on the
 	 * onchain game world in the Rush Store Solana Program (smart contract) after instantiating the SDK
 	 */
-	public create() {
-		console.log("create method");
-	}
+	public async create(region: Region, entity: Entity): Promise<number> {
+    console.log("Create logic executed.");
+    
+    const transaction = new Transaction().add(
+        SystemProgram.createAccount({
+            fromPubkey: this.keypair.publicKey,
+            newAccountPubkey: new PublicKey(entity.id),
+            lamports: await this.connection.getMinimumBalanceForRentExemption(0),
+            space: 0,
+            programId: this.programId,
+        })
+    );
+
+    const signature = await this.connection.sendTransaction(transaction, [this.keypair]);
+    await this.connection.confirmTransaction(signature);
+
+    return Math.floor(Math.random() * 1000); // Replace with actual entity ID
+}
 
 	/**
 	 * delete function
@@ -62,24 +77,28 @@ export class Solana {
 	 * /// TODO: DONE RULE: The Game Developer must be able to retrieve specific entity
 	 * data from their game’s On-chain world
 	 */
-	public get() {
-		console.log("get method");
-	}
-
-	/**
+	public async get(region: Region, entity: Entity, nonce: number, component: Component): Promise<ComponentValue> {
+        console.log("Get logic executed.");
+        return { id: component.id, value: "mockValue" } as ComponentValue; 
+    }	/**
 	 * set function
 	 * /// TODO: DONE RULE: The Game Developer must be able to update a specific entity data
 	 * from their game’s Onchain world
 	 */
-	async set(region: Region, entity: Entity, nonce: number, component: Component, value: ComponentValue): Promise<void> {
-        console.log("Set logic executed.");
-        const transaction = new Transaction().add(  
-            SystemProgram.transfer({
-                fromPubkey: this.keypair.publicKey,
-                toPubkey: new PublicKey(entity.id),
-                lamports: 0,
-            })
-        );
+	public async set(region: Region, entity: Entity, nonce: number, component: Component, value: ComponentValue): Promise<void> {
+            console.log("Set logic executed.");
+            const transaction = new Transaction().add(  
+                SystemProgram.transfer({
+                    fromPubkey: this.keypair.publicKey,
+                    toPubkey: new PublicKey(entity.id),
+                    lamports: 0,
+                })
+            );
+
+            const signature = await this.connection.sendTransaction(transaction, [this.keypair]);
+            await this.connection.confirmTransaction(signature);
+        }
+}
 
 function test() {
 	let Path = "";
