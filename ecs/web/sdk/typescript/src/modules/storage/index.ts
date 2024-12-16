@@ -72,14 +72,23 @@ export class Solana {
 	 * from their game’s Onchain world
 	 */
 	async set(region: Region, entity: Entity, nonce: number, component: Component, value: ComponentValue): Promise<void> {
-        console.log("Set logic executed.");
-        const transaction = new Transaction().add(  
-            SystemProgram.transfer({
-                fromPubkey: this.keypair.publicKey,
-                toPubkey: new PublicKey(entity.id),
-                lamports: 0,
-            })
-        );
+    console.log("Set logic executed.");
+    
+    // Logic to update the entity's data
+    // Assuming we have a method to update the entity's state in the Onchain world
+    await this.updateEntityData(entity.id, value); // Placeholder for actual update logic
+
+    const transaction = new Transaction().add(
+        SystemProgram.transfer({
+            fromPubkey: this.keypair.publicKey,
+            toPubkey: new PublicKey(entity.id),
+            lamports: 0,
+        })
+    );
+
+    const signature = await this.connection.sendTransaction(transaction, [this.keypair]);
+    await this.connection.confirmTransaction(signature);
+}
 
 function test() {
 	let Path = "";
