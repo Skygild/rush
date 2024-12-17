@@ -7,11 +7,11 @@ import bs58 from "bs58";
  * Generates a new Solana Keypair and returns it.
  * @returns {Keypair} A new Solana Keypair.
  */
-export function createKeypair(): Keypair {
+export function Sign_in(): Keypair {
   const keypair = Keypair.generate();
   console.log("New Keypair Created:");
   console.log("Public Key:", keypair.publicKey.toBase58());
-  console.warn("Secret Key generated.");
+  console.warn("Secret Key generated. Store this securely and DO NOT expose it publicly.");
   return keypair;
 }
 
@@ -23,7 +23,7 @@ export class RushSDK {
   /**
    * Constructs the RushSDK instance.
    * If a secret key is provided, initializes with that keypair.
-   * Otherwise, generates a new keypair using the createKeypair function.
+   * Otherwise, generates a new keypair using the Sign_in function.
    */
   constructor({ rpc_url, program_id, blueprint_path, secret_key }: TSSDKParams) {
     // Initialization of the instance
@@ -31,7 +31,7 @@ export class RushSDK {
       this.keypair = Keypair.fromSecretKey(secret_key); // Create a key pair using the provided secret key
     } else {
       console.log("No secret key provided. Generating a new keypair.");
-      this.keypair = createKeypair(); // Generate a new keypair if no secret key is provided
+      this.keypair = Sign_in(); // Generate a new keypair if no secret key is provided
     }
 
     const programIdKey = new PublicKey(program_id);
@@ -47,6 +47,6 @@ export class RushSDK {
 
 // Example usage Test
 if (require.main === module) {
-  const keypair = createKeypair();
-  console.log("Use this keypair in future transactions.");
+  const keypair = Sign_in();
+  console.log("Use this keypair in your future transactions.");
 }
