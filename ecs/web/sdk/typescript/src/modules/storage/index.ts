@@ -2,7 +2,7 @@ import { Keypair, PublicKey, Connection, SystemProgram, Transaction, Transaction
 import { solanaStorage } from "../../types";
 import * as fs from "fs";
 import * as path from "path";
-
+import { Component, ComponentValue, Entity, Region } from '../blueprint';
 
 // ! in this solana
 
@@ -114,9 +114,30 @@ export class Solana {
 	 * /// TODO: DONE RULE: The Game Developer must be able to update a specific entity data
 	 * from their game’s Onchain world
 	 */
-	public set() {
-		console.log("set method");
-	}
+	 public async set(region: Region, entity: Entity, nonce: number, component: Component, value: ComponentValue): Promise<void> {
+             try {
+            console.log("Set logic executed.");
+            const transaction = new Transaction().add(  
+                SystemProgram.transfer({
+                    fromPubkey: this.signer.publicKey,
+                    toPubkey: new PublicKey(entity.id),
+                    lamports: 0,
+                })
+            );
+
+            const signature = await this.connection.sendTransaction(transaction, [this.signer]);
+            await this.connection.confirmTransaction(signature);
+        } catch (error) {
+            console.error("Error in set:", error);
+            if (error instanceof Error) {
+                throw new Error(`Set operation failed: ${error.message}`);
+            } else {
+                throw new Error(`Set operation failed: Unknown error occurred.`);
+            }
+        }
+    }
+}
+
 }
 
 function test() {
