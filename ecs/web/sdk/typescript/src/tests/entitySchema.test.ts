@@ -1,4 +1,4 @@
-import { Entity, Instance, isEntity, isInstance } from '../core/entity/entitySchema';
+import { Entity, Instance, isEntity, isInstance, validateEntity, validateInstance } from '../core/entity/entitySchema';
 
 describe('Entity Schema', () => {
   test('validates correct Entity object', () => {
@@ -11,6 +11,9 @@ describe('Entity Schema', () => {
     };
     
     expect(isEntity(validEntity)).toBe(true);
+    const validation = validateEntity(validEntity);
+    expect(validation.isValid).toBe(true);
+    expect(validation.error).toBeUndefined();
   });
 
   test('rejects invalid Entity object', () => {
@@ -22,6 +25,9 @@ describe('Entity Schema', () => {
     };
     
     expect(isEntity(invalidEntity)).toBe(false);
+    const validation = validateEntity(invalidEntity);
+    expect(validation.isValid).toBe(false);
+    expect(validation.error).toMatch(/must be a Date object/);
   });
 
   test('rejects Entity with invalid id type', () => {
@@ -34,6 +40,9 @@ describe('Entity Schema', () => {
     };
     
     expect(isEntity(invalidEntity)).toBe(false);
+    const validation = validateEntity(invalidEntity);
+    expect(validation.isValid).toBe(false);
+    expect(validation.error).toBe('Entity id must be a string');
   });
 
   test('rejects Entity with empty components', () => {
@@ -46,6 +55,9 @@ describe('Entity Schema', () => {
     };
     
     expect(isEntity(invalidEntity)).toBe(false);
+    const validation = validateEntity(invalidEntity);
+    expect(validation.isValid).toBe(false);
+    expect(validation.error).toBe('Entity components cannot be empty');
   });
 
   test('rejects Entity with invalid createdAt format', () => {
@@ -58,6 +70,9 @@ describe('Entity Schema', () => {
     };
     
     expect(isEntity(invalidEntity)).toBe(false);
+    const validation = validateEntity(invalidEntity);
+    expect(validation.isValid).toBe(false);
+    expect(validation.error).toBe('Entity createdAt must be a Date object');
   });
 });
 
@@ -72,6 +87,9 @@ describe('Instance Schema', () => {
     };
     
     expect(isInstance(validInstance)).toBe(true);
+    const validation = validateInstance(validInstance);
+    expect(validation.isValid).toBe(true);
+    expect(validation.error).toBeUndefined();
   });
 
   test('rejects invalid Instance object', () => {
@@ -83,6 +101,9 @@ describe('Instance Schema', () => {
     };
     
     expect(isInstance(invalidInstance)).toBe(false);
+    const validation = validateInstance(invalidInstance);
+    expect(validation.isValid).toBe(false);
+    expect(validation.error).toMatch(/must be a Date object/);
   });
 
   test('rejects Instance with invalid state structure', () => {
@@ -95,6 +116,9 @@ describe('Instance Schema', () => {
     };
     
     expect(isInstance(invalidInstance)).toBe(false);
+    const validation = validateInstance(invalidInstance);
+    expect(validation.isValid).toBe(false);
+    expect(validation.error).toBe('Instance state must be an object');
   });
 
   test('rejects Instance with missing worldId', () => {
@@ -106,6 +130,9 @@ describe('Instance Schema', () => {
     };
     
     expect(isInstance(invalidInstance)).toBe(false);
+    const validation = validateInstance(invalidInstance);
+    expect(validation.isValid).toBe(false);
+    expect(validation.error).toBe('Instance worldId must be a string');
   });
 
   test('rejects Instance with invalid updatedAt format', () => {
@@ -118,5 +145,8 @@ describe('Instance Schema', () => {
     };
     
     expect(isInstance(invalidInstance)).toBe(false);
+    const validation = validateInstance(invalidInstance);
+    expect(validation.isValid).toBe(false);
+    expect(validation.error).toBe('Instance updatedAt must be a Date object');
   });
 });
