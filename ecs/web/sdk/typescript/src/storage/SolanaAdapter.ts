@@ -48,7 +48,39 @@ export class SolanaAdapter implements StoragePort {
 	}
 
 	public async migrate(): Promise<void> {
-		// Migration logic
+		let worldPDA: PublicKey;
+		try {
+			worldPDA = await this.findWorldPDA();
+		} catch (error) {
+			console.error("Error finding World PDA:", error);
+			throw new Error("Failed to find World PDA");
+		}
+
+		// Logic to spawn entities
+		const entityPDAs = await this.spawnEntities(worldPDA);
+		console.log("Entities spawned:", entityPDAs);
+	}
+
+	public async findWorldPDA(): Promise<PublicKey> {
+		// Logic to derive the World PDA
+		const seeds = [Buffer.from(this.blueprint)];
+		return (await PublicKey.findProgramAddress(seeds, this.programId))[0];
+	}
+
+public async testSpawnEntities(worldPDA: PublicKey): Promise<PublicKey[]> {
+    return await this.spawnEntities(worldPDA);
+}
+
+private async spawnEntities(worldPDA: PublicKey): Promise<PublicKey[]> {
+		// Logic to create entity PDAs
+		const entityPDAs: PublicKey[] = [];
+		// Example logic to create multiple entity PDAs
+		for (let i = 0; i < 5; i++) {
+			const seeds = [Buffer.from(this.blueprint), Buffer.from(i.toString())];
+			const entityPDA = (await PublicKey.findProgramAddress(seeds, this.programId))[0];
+			entityPDAs.push(entityPDA);
+		}
+		return entityPDAs;
 	}
 
 	public async create(): Promise<void> {
